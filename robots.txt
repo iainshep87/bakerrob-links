@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.bakerrob.com/sitemap.xml
+Sitemap: https://www.bakerrob.com.au/sitemap.xml
