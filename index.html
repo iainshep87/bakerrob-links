@@ -83,21 +83,6 @@
     .link-label { font-size: 14px; font-weight: 500; color: #e0e0e0; flex: 1; }
     .link-arrow { color: rgba(255,255,255,0.2); font-size: 15px; }
 
-    /* ── TIP JAR ── */
-    .tip-wrapper { margin-top: 32px; }
-    .tip-box { background: #0f0f0f; border: 0.5px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px 20px 22px; }
-    .tip-heading { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 14px; text-align: center; }
-    .tip-amounts { display: flex; gap: 8px; margin-bottom: 14px; }
-    .tip-btn { flex: 1; background: #1a1a1a; border: 0.5px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 8px; color: #e0e0e0; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.1s; -webkit-tap-highlight-color: transparent; }
-    .tip-btn:hover { background: #252525; border-color: rgba(255,255,255,0.2); }
-    .tip-btn:active { transform: scale(0.97); }
-    .tip-btn.selected { background: #1a1200; border-color: #c8a84b; color: #f0c94a; }
-    .tip-submit { width: 100%; background: #1a1200; border: 1.5px solid #c8a84b; border-radius: 10px; padding: 14px; color: #f0c94a; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; letter-spacing: 0.05em; cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.1s; -webkit-tap-highlight-color: transparent; }
-    .tip-submit:hover { background: #221800; border-color: #e0b84a; }
-    .tip-submit:active { transform: scale(0.98); }
-    .tip-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-    .tip-success { text-align: center; padding: 10px 0 4px; font-size: 13px; color: #f0c94a; letter-spacing: 0.05em; display: none; }
-
     .rule { width: 32px; height: 1px; background: rgba(255,255,255,0.07); margin: 44px auto 0; }
   </style>
 </head>
@@ -175,69 +160,9 @@
       </a>
     </div>
 
-    <!-- TIP JAR -->
-    <div class="tip-wrapper">
-      <div class="tip-box">
-        <div class="tip-heading">☕ Buy us a coffee</div>
-        <div class="tip-amounts">
-          <button class="tip-btn" data-amount="500">$5</button>
-          <button class="tip-btn" data-amount="1000">$10</button>
-          <button class="tip-btn" data-amount="2000">$20</button>
-        </div>
-        <button class="tip-submit" id="tipSubmit" disabled>Select an amount</button>
-        <div class="tip-success" id="tipSuccess">Thanks for the coffee ☕ We appreciate you.</div>
-      </div>
-    </div>
-
     <div class="rule"></div>
   </div>
 
-  <script>
-    // Handle tip=success in URL
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('tip') === 'success') {
-      document.getElementById('tipSuccess').style.display = 'block';
-      window.history.replaceState({}, '', '/');
-    }
-
-    // Tip button selection
-    let selectedAmount = null;
-    const tipBtns = document.querySelectorAll('.tip-btn');
-    const tipSubmit = document.getElementById('tipSubmit');
-
-    tipBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tipBtns.forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedAmount = parseInt(btn.dataset.amount);
-        tipSubmit.disabled = false;
-        tipSubmit.textContent = 'Buy us a coffee →';
-      });
-    });
-
-    tipSubmit.addEventListener('click', async () => {
-      if (!selectedAmount) return;
-      tipSubmit.disabled = true;
-      tipSubmit.textContent = 'Just a sec…';
-      try {
-        const res = await fetch('/api/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount: selectedAmount })
-        });
-        const data = await res.json();
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          tipSubmit.disabled = false;
-          tipSubmit.textContent = 'Try again';
-        }
-      } catch {
-        tipSubmit.disabled = false;
-        tipSubmit.textContent = 'Try again';
-      }
-    });
-  </script>
 
 </body>
 </html>
